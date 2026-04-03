@@ -8,27 +8,30 @@ const path = require('path');
 const KEYS_FILE = path.join(__dirname, 'vapid-keys.json');
 const SUBS_FILE = path.join(__dirname, 'subscriptions.json');
 
-// Načteme nebo vygenerujeme VAPID klíče (jednorázové, ukládají se do souboru)
+// Načteme nebo vygenerujeme VAPID klíče
+// Priorita: proměnné prostředí (Railway) → soubor na disku → vygenerovat nové
 function initVapidKeys() {
-  if (fs.existsSync(KEYS_FILE)) {
-    const keys = JSON.parse(fs.readFileSync(KEYS_FILE, 'utf8'));
-    webpush.setVapidDetails(
-      'mailto:hasici-app@localhost',
-      keys.publicKey,
-      keys.privateKey
-    );
-    return keys;
+  let keys;
+
+  if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+    // Produkce (Railway) — klíče jsou v proměnných prostředí
+    keys = {
+      publicKey: process.env.VAPID_PUBLIC_KEY,
+      privateKey: process.env.VAPID_PRIVATE_KEY,
+    };
+    console.log('🔑 VAPID klíče načteny z proměnných prostředí');
+  } else if (fs.existsSync(KEYS_FILE)) {
+    // Lokální vývoj — klíče jsou v souboru
+    keys = JSON.parse(fs.readFileSync(KEYS_FILE, 'utf8'));
+    console.log('🔑 VAPID klíče načteny ze souboru');
+  } else {
+    // První spuštění — vygenerujeme a uložíme
+    keys = webpush.generateVAPIDKeys();
+    fs.writeFileSync(KEYS_FILE, JSON.stringify(keys, null, 2));
+    console.log('✅ Vygenerovány nové VAPID klíče (ulož je do Railway proměnných prostředí!)');
   }
 
-  // Vygenerujeme nové klíče
-  const keys = webpush.generateVAPIDKeys();
-  fs.writeFileSync(KEYS_FILE, JSON.stringify(keys, null, 2));
-  webpush.setVapidDetails(
-    'mailto:hasici-app@localhost',
-    keys.publicKey,
-    keys.privateKey
-  );
-  console.log('✅ Vygenerovány nové VAPID klíče');
+  webpush.setVapidDetails('mailto:hasici-app@localhost', keys.publicKey, keys.privateKey);
   return keys;
 }
 
