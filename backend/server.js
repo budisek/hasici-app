@@ -130,21 +130,42 @@ app.get('/api/diagnostics', (req, res) => {
   });
 });
 
-// Test — odešle zkušební notifikaci na všechna přihlášená zařízení
+// Test — odešle zkušební notifikaci a vrátí detailní výsledek pro každé zařízení
 app.post('/api/test-notification', async (req, res) => {
-  const { posliNotifikaci } = require('./pushService');
-  try {
-    await posliNotifikaci({
-      typNazev: 'TESTOVACÍ NOTIFIKACE',
-      podtypNazev: 'Vše funguje!',
-      obec: 'Hasičská aplikace',
-      okres: { nazev: 'Vysočina' },
-      id: 0,
-    });
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  const webpush = require('web-push');
+  const fs = require('fs');
+  const path = require('path');
+  const subsFile = path.join(__dirname, 'subscriptions.json');
+  const subs = fs.existsSync(subsFile)
+    ? JSON.parse(fs.readFileSync(subsFile, 'utf8'))
+    : [];
+
+  if (subs.length === 0) {
+    return res.json({ success: false, error: 'Žádná přihlášená zařízení' });
   }
+
+  const payload = JSON.stringify({
+    title: 'TESTOVACÍ NOTIFIKACE 🚒',
+    body: 'Vše funguje! Hasiči jsou připraveni.',
+    tag: 'test',
+    data: {},
+  });
+
+  const vysledky = [];
+  for (const sub of subs) {
+    try {
+      await webpush.sendNotification(sub, payload);
+      vysledky.push({ endpoint: sub.endpoint.slice(-30), ok: true });
+    } catch (err) {
+      vysledky.push({
+        endpoint: sub.endpoint.slice(-30),
+        ok: false,
+        status: err.statusCode,
+        error: err.body || err.message,
+      });
+    }
+  }
+  res.json({ success: true, vysledky });
 });
 
 // Push notifikace — uložení subscription ze zařízení
