@@ -116,6 +116,37 @@ app.get('/api/vapid-public-key', (req, res) => {
   res.json({ publicKey: vapidKeys.publicKey });
 });
 
+// Diagnostika — počet přihlášených zařízení a zdroj VAPID klíčů
+app.get('/api/diagnostics', (req, res) => {
+  const fs = require('fs');
+  const subsFile = require('path').join(__dirname, 'subscriptions.json');
+  const subs = fs.existsSync(subsFile)
+    ? JSON.parse(fs.readFileSync(subsFile, 'utf8'))
+    : [];
+  res.json({
+    subscriptions: subs.length,
+    vapidSource: process.env.VAPID_PUBLIC_KEY ? 'env' : 'file/generated',
+    publicKeyPrefix: vapidKeys.publicKey.slice(0, 12) + '...',
+  });
+});
+
+// Test — odešle zkušební notifikaci na všechna přihlášená zařízení
+app.post('/api/test-notification', async (req, res) => {
+  const { posliNotifikaci } = require('./pushService');
+  try {
+    await posliNotifikaci({
+      typNazev: 'TESTOVACÍ NOTIFIKACE',
+      podtypNazev: 'Vše funguje!',
+      obec: 'Hasičská aplikace',
+      okres: { nazev: 'Vysočina' },
+      id: 0,
+    });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Push notifikace — uložení subscription ze zařízení
 app.post('/api/subscribe', (req, res) => {
   const subscription = req.body;

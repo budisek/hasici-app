@@ -16,8 +16,9 @@ const OKRESY_VYSOCINY = [
 export default function Settings() {
   const [nastaveni, setNastaveni] = useState(null);
   const [ukladani, setUkladani] = useState(false);
-  const [notifStav, setNotifStav] = useState(''); // zpráva o stavu notifikací
+  const [notifStav, setNotifStav] = useState('');
   const [notifChyba, setNotifChyba] = useState('');
+  const [testStav, setTestStav] = useState('');
 
   useEffect(() => {
     nactiNastaveni().then(setNastaveni).catch(() => {});
@@ -32,6 +33,18 @@ export default function Settings() {
     } finally {
       setUkladani(false);
     }
+  }
+
+  async function posliTestNotifikaci() {
+    setTestStav('Odesílám…');
+    try {
+      const r = await fetch('/api/test-notification', { method: 'POST' });
+      const d = await r.json();
+      setTestStav(d.success ? '✅ Testovací notifikace odeslána!' : '❌ ' + d.error);
+    } catch {
+      setTestStav('❌ Nepodařilo se odeslat');
+    }
+    setTimeout(() => setTestStav(''), 4000);
   }
 
   async function prihlasNotifikace() {
@@ -140,6 +153,17 @@ export default function Settings() {
             <p style={{ marginTop: 12, fontSize: 14, color: '#cc2200', lineHeight: 1.5 }}>
               ❌ {notifChyba}
             </p>
+          )}
+
+          <button
+            className="btn btn-outline"
+            style={{ marginTop: 10 }}
+            onClick={posliTestNotifikaci}
+          >
+            🔔 Odeslat testovací notifikaci
+          </button>
+          {testStav && (
+            <p style={{ marginTop: 8, fontSize: 14, color: '#424242' }}>{testStav}</p>
           )}
         </div>
       </div>
