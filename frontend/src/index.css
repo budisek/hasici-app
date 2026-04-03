@@ -1,0 +1,347 @@
+/* Globální styly — mobilní design */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --cervena: #cc2200;
+  --cervena-tmava: #991a00;
+  --oranzova: #e05a00;
+  --modra: #1565c0;
+  --zelena: #2e7d32;
+  --seda: #607d8b;
+  --pozadi: #f5f5f5;
+  --bila: #ffffff;
+  --text: #212121;
+  --text-slaby: #757575;
+  --ohraniceni: #e0e0e0;
+  --nav-vyska: 60px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--pozadi);
+}
+
+/* ── Navigační lišta dole ── */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--nav-vyska) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: var(--bila);
+  border-top: 1px solid var(--ohraniceni);
+  display: flex;
+  align-items: stretch;
+  z-index: 1000;
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text-slaby);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.nav-item.aktivni {
+  color: var(--cervena);
+}
+
+.nav-item svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ── Hlavní obsah ── */
+.obsah {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--nav-vyska) + var(--safe-bottom));
+  overflow: hidden;
+}
+
+/* ── Karta události ── */
+.udalost-karta {
+  background: var(--bila);
+  border-bottom: 1px solid var(--ohraniceni);
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.udalost-karta:active {
+  background: #f0f0f0;
+}
+
+.udalost-ikona {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.udalost-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.udalost-typ {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.udalost-podtyp {
+  font-size: 12px;
+  color: var(--text-slaby);
+  margin-bottom: 4px;
+}
+
+.udalost-lokace {
+  font-size: 13px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.udalost-cas {
+  font-size: 11px;
+  color: var(--text-slaby);
+  flex-shrink: 0;
+  text-align: right;
+}
+
+/* ── Detail události ── */
+.detail-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bila);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 500;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.detail-tah {
+  width: 36px;
+  height: 4px;
+  background: var(--ohraniceni);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.detail-header {
+  padding: 12px 16px 16px;
+  border-bottom: 1px solid var(--ohraniceni);
+}
+
+.detail-sekce {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ohraniceni);
+}
+
+.detail-sekce h3 {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-slaby);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.detail-radek {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.detail-radek .stitek {
+  color: var(--text-slaby);
+  flex-shrink: 0;
+  width: 80px;
+}
+
+/* ── Technika (vozidla) ── */
+.technika-polozka {
+  background: var(--pozadi);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.technika-polozka .jednotka {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.technika-polozka .typ-vozidla {
+  color: var(--text-slaby);
+  font-size: 12px;
+}
+
+/* ── Stavový odznak ── */
+.stav-odznak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.stav-aktivni { background: #e8f5e9; color: #2e7d32; }
+.stav-uzavrena { background: #f5f5f5; color: #757575; }
+
+/* ── Nastavení ── */
+.nastaveni-sekce {
+  background: var(--bila);
+  margin: 12px 0;
+  border-top: 1px solid var(--ohraniceni);
+  border-bottom: 1px solid var(--ohraniceni);
+}
+
+.nastaveni-radek {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--ohraniceni);
+  gap: 12px;
+}
+
+.nastaveni-radek:last-child {
+  border-bottom: none;
+}
+
+.nastaveni-radek label {
+  font-size: 15px;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.nastaveni-radek select,
+.nastaveni-radek input {
+  font-size: 15px;
+  color: var(--text);
+  border: none;
+  background: none;
+  text-align: right;
+  flex: 1;
+  outline: none;
+  min-width: 0;
+}
+
+/* ── Tlačítka ── */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  width: 100%;
+}
+
+.btn:active { opacity: 0.8; }
+.btn-cervena { background: var(--cervena); color: white; }
+.btn-outline { background: transparent; border: 1.5px solid var(--cervena); color: var(--cervena); }
+
+/* ── Stav načítání / prázdný stav ── */
+.stav-zprava {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  color: var(--text-slaby);
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+}
+
+.stav-zprava .ikona {
+  font-size: 48px;
+}
+
+/* ── Záhlaví stránky ── */
+.page-header {
+  background: var(--bila);
+  border-bottom: 1px solid var(--ohraniceni);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.pocet-odznak {
+  background: var(--cervena);
+  color: white;
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* ── Scrollovatelný seznam ── */
+.seznam {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}

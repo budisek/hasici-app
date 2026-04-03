@@ -1,0 +1,7 @@
+node_modules/
+frontend/dist/
+
+# Soubory s citlivými daty — nesmí být v gitu!
+backend/vapid-keys.json
+backend/subscriptions.json
+backend/settings.json

@@ -1,0 +1,9 @@
+[build]
+# Railway sestaví frontend a nainstaluje závislosti
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "node backend/server.js"
+healthcheckPath = "/api/settings"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
